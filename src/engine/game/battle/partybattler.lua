@@ -98,7 +98,7 @@ end
 ---@param amount number
 ---@return integer
 function PartyBattler:calculateDamageSimple(amount)
-    return math.ceil(amount - (self.chara:getStat("defense") * 3))
+    return math.max(math.ceil(amount - (self.chara:getStat("defense") * 3)), 1)
 end
 
 --- Gets the damage reduction multiplier for damage of a particular element
