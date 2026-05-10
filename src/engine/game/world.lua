@@ -153,7 +153,7 @@ function World:heal(target, amount, text)
 end
 
 --- Gets the `Player` and `Follower` characters
----@return T
+---@return (Player|Follower)[]
 function World:getPlayerAndFollowers()
     local characters = TableUtils.copy(self.followers)
     if self.player then
@@ -368,7 +368,7 @@ end
 
 ---@param key string
 function World:onKeyPressed(key)
-    if Kristal.Config["debug"] and Input.ctrl() then
+    if Kristal.isDevMode() and Input.ctrl() then
         if key == "m" then
             if self.music then
                 if self.music:isPlaying() then
