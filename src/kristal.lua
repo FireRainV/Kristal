@@ -1205,6 +1205,14 @@ function Kristal.getVolume()
     return Kristal.Config["masterVolume"]
 end
 
+function Kristal.resetDevMode()
+    DEBUG_OVERRIDE = false
+
+    FAST_FORWARD = false
+    DEBUG_RENDER = false
+    NOCLIP = false
+end
+
 --- Clears all state expected to be changed by projects. \
 --- Called internally when exiting or reloading a project.
 function Kristal.clearModState()
@@ -1221,11 +1229,7 @@ function Kristal.clearModState()
     Kristal.callEvent(KRISTAL_EVENT.cleanup)
     Mod = nil
 
-    DEBUG_OVERRIDE = false
-
-    FAST_FORWARD = false
-    DEBUG_RENDER = false
-    NOCLIP = false
+    Kristal.resetDevMode()
 
     -- Close the console or debug menu if open
     -- (We don't care much if someone "smuggles" them out of the Game state, but we'll try to close them if we can)
@@ -1465,8 +1469,7 @@ function Kristal.loadMod(id, save_id, save_name, after)
         if Kristal.preInitMod(mod.id) then
             Kristal.setDesiredWindowTitleAndIcon()
             Kristal.setState("Game", save_id, save_name)
-            FAST_FORWARD = false
-            DEBUG_RENDER = false
+            Kristal.resetDevMode()
         end
     end)
 
