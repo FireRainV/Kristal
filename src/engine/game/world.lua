@@ -473,7 +473,7 @@ end
 ---@param collider      Collider    The collider to check collisions for
 ---@param enemy_check?  boolean     Whether to include the enemy collision map in the check
 ---@return boolean  collided    Whether a collision was found
----@return (Object)[]  with        The objects that were collided with
+---@return Object[] collisions The objects that were collided with
 function World:checkCollisions(collider, enemy_check)
     local collided_with = {}
     Object.startCache()
