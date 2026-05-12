@@ -74,6 +74,15 @@ function Kristal.fetch(url, options)
     return true
 end
 
+function Kristal.verifySoundSystem()
+    local source = love.audio.newSource("assets/music/none.ogg", "static")
+    local success = source:play()
+    if not success then
+        print("Audio has been detected as unavailable, disabling sound for the rest of the session")
+        SOUND_DISABLED = true
+    end
+end
+
 function love.load(args)
     --[[
         Launch args:
@@ -132,6 +141,8 @@ function love.load(args)
 
     -- hide mouse
     Kristal.hideCursor()
+
+    Kristal.verifySoundSystem()
 
     -- make mouse sprite
     MOUSE_SPRITE = love.graphics.newImage((love.math.random(1000) <= 1) and "assets/sprites/kristal/starwalker.png" or
