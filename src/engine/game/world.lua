@@ -187,9 +187,15 @@ function World:hurtParty(battler, amount)
     local any_killed = false
     local any_alive = false
     for _, party in ipairs(Game.party) do
+        local current_amount = amount
+
+        for _, item in ipairs(party:getEquipment()) do
+            current_amount = item:onWorldDamage(current_amount) or current_amount
+        end
+
         if not battler or battler == party.id or battler == party then
             local current_health = party:getHealth()
-            party:setHealth(party:getHealth() - amount)
+            party:setHealth(party:getHealth() - current_amount)
             if party:getHealth() <= 0 then
                 party:setHealth(1)
                 any_killed = true
@@ -204,7 +210,7 @@ function World:hurtParty(battler, amount)
                     char:statusMessage("damage", dealt_amount)
                 end
             end
-        elseif party:getHealth() > amount then
+        elseif party:getHealth() > current_amount then
             any_alive = true
         end
     end
@@ -469,6 +475,23 @@ function World:checkCollision(collider, enemy_check)
     return false
 end
 
+--- Returns all the inputs `collider` is currently colliding with in the world
+---@param collider      Collider    The collider to check collisions for
+---@param enemy_check?  boolean     Whether to include the enemy collision map in the check
+---@return boolean  collided    Whether a collision was found
+---@return Object[] collisions The objects that were collided with
+function World:checkCollisions(collider, enemy_check)
+    local collided_with = {}
+    Object.startCache()
+    for _, other in ipairs(self:getCollision(enemy_check)) do
+        if collider:collidesWith(other) and collider ~= other then
+            table.insert(collided_with, other.parent)
+        end
+    end
+    Object.endCache()
+    return #collided_with > 0, collided_with
+end
+
 --- Whether the world has a currently active cutscene
 ---@return boolean?
 function World:hasCutscene()
@@ -565,9 +588,6 @@ function World:spawnPlayer(...)
         facing = self.player:getFacing()
         self:removeChild(self.player)
     end
-    if self.soul then
-        self:removeChild(self.soul)
-    end
 
     self.player = Player(chara, x, y)
     self.player.layer = self.map.object_layer
@@ -578,17 +598,23 @@ function World:spawnPlayer(...)
         self.player.party = party
     end
 
-    self.soul = OverworldSoul(self.player:getRelativePos(self.player.actor:getSoulOffset()))
-    self.soul:setColor(Game:getSoulColor())
-    self.soul.layer = WORLD_LAYERS["soul"]
-    self:addChild(self.soul)
-
     if self.camera.attached_x then
         self.camera:setPosition(self.player.x, self.camera.y)
     end
     if self.camera.attached_y then
         self.camera:setPosition(self.camera.x, self.player.y - (self.player.height * 2) / 2)
     end
+end
+
+--- Spawns the soul into the world
+---@param x? number
+---@param y? number
+function World:spawnSoul(x, y)
+    if self.soul then
+        self:removeChild(self.soul)
+    end
+    self.soul = OverworldSoul(x, y)
+    self:addChild(self.soul)
 end
 
 --- Gets the `Character` in the world of a party member
@@ -736,6 +762,7 @@ function World:spawnParty(marker, party, extra, facing)
                 follower:setFacing(facing or self.player:getFacing())
             end
         end
+        self:spawnSoul()
     end
 end
 
