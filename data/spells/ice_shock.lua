@@ -56,7 +56,7 @@ function spell:onCast(user, target)
         particles[3] = createParticle(x, y+20)
         wait(3 / 30)
         Game.battle:addChild(IceSpellBurst(x, y))
-        for _,particle in ipairs(particles) do
+        for _, particle in ipairs(particles) do
             for i = 0, 5 do
                 local effect = IceSpellEffect(particle.x, particle.y)
                 effect:setScale(0.75)
@@ -68,7 +68,7 @@ function spell:onCast(user, target)
             end
         end
         wait(1 / 30)
-        for _,particle in ipairs(particles) do
+        for _, particle in ipairs(particles) do
             particle:remove()
         end
         wait(4 / 30)

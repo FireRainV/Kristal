@@ -48,7 +48,7 @@ function item:onToss()
         end
 
         if dropped then
-            for k,storage in pairs(Game.inventory:getDarkInventory().storages) do
+            for k, storage in pairs(Game.inventory:getDarkInventory().storages) do
                 if storage.id ~= "key_items" and storage.id ~= "storage" then
                     for i = 1, storage.max do
                         storage[i] = nil

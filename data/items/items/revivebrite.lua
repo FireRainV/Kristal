@@ -52,14 +52,14 @@ function item:init()
 end
 
 function item:onWorldUse(target)
-    for _,party_member in ipairs(Game.party) do
+    for _, party_member in ipairs(Game.party) do
         Game.world:heal(party_member, 50)
     end
     return true
 end
 
 function item:onBattleUse(user, target)
-    for _,battler in ipairs(Game.battle.party) do
+    for _, battler in ipairs(Game.battle.party) do
         if battler.chara:getHealth() <= 0 then
             battler:heal(math.abs(battler.chara:getHealth()) + battler.chara:getStat("health"))
         else
